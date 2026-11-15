@@ -1,17 +1,18 @@
-export type Focus = { x: number; y: number; s: number }
+export type Focus = { x: number; y: number; s: number; ax?: number }
 
 export type Chapter = {
   id: 'design' | 'engine' | 'size' | 'first'
   from: number
   to: number
+  side: 'left' | 'right'
   focus: Focus
 }
 
 export const CHAPTERS: Chapter[] = [
-  { id: 'design', from: 0.34, to: 0.5, focus: { x: 32, y: 62, s: 1.45 } },
-  { id: 'engine', from: 0.5, to: 0.65, focus: { x: 36, y: 50, s: 1.45 } },
-  { id: 'size', from: 0.65, to: 0.8, focus: { x: 65, y: 75, s: 1.4 } },
-  { id: 'first', from: 0.8, to: 0.89, focus: { x: 88, y: 57, s: 1.4 } },
+  { id: 'design', from: 0.34, to: 0.5, side: 'right', focus: { x: 32, y: 62, s: 1.45 } },
+  { id: 'engine', from: 0.5, to: 0.65, side: 'right', focus: { x: 36, y: 50, s: 1.45 } },
+  { id: 'size', from: 0.65, to: 0.8, side: 'right', focus: { x: 65, y: 75, s: 1.4 } },
+  { id: 'first', from: 0.8, to: 0.89, side: 'right', focus: { x: 88, y: 57, s: 1.4 } },
 ]
 
 export const ENGINES = [

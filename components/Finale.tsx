@@ -18,7 +18,7 @@ function Letter({ p, ch, i }: { p: MotionValue<number>; ch: string; i: number })
 export default function Finale({ p, on, onBack }: { p: MotionValue<number>; on: boolean; onBack: () => void }) {
   const subO = useTransform(p, [0.988, 1], [0, 1])
   const subY = useTransform(p, [0.988, 1], [14, 0])
-  const curO = useTransform(p, [0.975, 0.977], [0, 1])
+  const curO = useTransform(p, [0.975, 0.977, 0.984, 0.987], [0, 1, 1, 0])
   const lift = useTransform(p, [0.972, 0.99], ['0vh', '-29vh'], { ease: easeInOut })
   return (
     <>

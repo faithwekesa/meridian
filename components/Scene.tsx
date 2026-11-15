@@ -21,6 +21,7 @@ import Parts from './Parts'
 import TopBar from './TopBar'
 import { DesignCard, EngineCard, FirstCard, SizeCard } from './Chapter'
 import { CHAPTERS } from './data'
+import { rumble, tick, unlock } from './sound'
 
 const LAMPS = [
   { left: '14.4%', top: '62%' },
@@ -29,14 +30,14 @@ const LAMPS = [
 
 const E = { ease: easeInOut }
 
-const OVERVIEW = { x: 50, y: 50, s: 1 }
+const OVERVIEW = { x: 50, y: 50, s: 1, ax: 50 }
 
 const KEYS = [
   { p: 0, ...OVERVIEW },
   { p: 0.3, ...OVERVIEW },
   ...CHAPTERS.flatMap((c) => [
-    { p: c.from + 0.02, ...c.focus },
-    { p: c.to - 0.01, x: c.focus.x, y: c.focus.y, s: c.focus.s * 1.07 },
+    { p: c.from + 0.02, ...c.focus, ax: c.focus.ax ?? 50 },
+    { p: c.to - 0.01, x: c.focus.x, y: c.focus.y, s: c.focus.s * 1.07, ax: c.focus.ax ?? 50 },
   ]),
   { p: 0.915, ...OVERVIEW },
   { p: 1, ...OVERVIEW },
@@ -70,10 +71,11 @@ const cam = (v: number) => {
     const s = smooth(v, (k) => k.s)
     const fx = smooth(v, (k) => k.x)
     const fy = smooth(v, (k) => k.y)
+    const ax = smooth(v, (k) => k.ax)
     const wide = typeof window !== 'undefined' && window.innerWidth > 700
     const k = Math.min(1, Math.max(0, (v - 0.925) / 0.04))
     const shift = wide ? 23 * k * k * (3 - 2 * k) : 0
-    lastCam = { s, x: -s * (fx - 50) + shift, y: -s * (fy - 50) }
+    lastCam = { s, x: (wide ? ax - 50 : 0) - s * (fx - 50) + shift, y: -s * (fy - 50) }
     lastV = v
   }
   return lastCam
@@ -93,11 +95,17 @@ export default function Scene() {
   const tour = useRef<{ stop: () => void } | null>(null)
   const [touring, setTouring] = useState(false)
   const [introDone, setIntroDone] = useState(false)
+  const [ready, setReady] = useState(false)
+  const [soundOn, setSoundOn] = useState(false)
+  const sound = useRef(false)
+  const lit = useRef(false)
+  const typed = useRef(0)
 
   const play = () => {
     playing.current?.stop()
     if (reduce) {
       intro.set(1)
+      document.documentElement.style.overflow = ''
       return
     }
     intro.set(0)
@@ -146,7 +154,7 @@ export default function Scene() {
 
   useEffect(() => {
     window.scrollTo(0, 0)
-    play()
+    document.documentElement.style.overflow = 'hidden'
     const take = () => stopTour()
     const keys = (e: KeyboardEvent) => {
       if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '].includes(e.key)) stopTour()
@@ -165,6 +173,51 @@ export default function Scene() {
       document.documentElement.style.overflow = ''
     }
   }, [])
+
+  useEffect(() => {
+    let done = false
+    const finish = () => {
+      if (done) return
+      done = true
+      setReady(true)
+    }
+    const img = new window.Image()
+    img.onload = finish
+    img.onerror = finish
+    img.src = '/car-graded.webp'
+    if (img.complete) finish()
+    const t = window.setTimeout(finish, 4000)
+    return () => window.clearTimeout(t)
+  }, [])
+
+  useEffect(() => {
+    if (!ready) return
+    const t = window.setTimeout(() => play(), 350)
+    return () => window.clearTimeout(t)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready])
+
+  const toggleSound = () => {
+    const next = !sound.current
+    sound.current = next
+    setSoundOn(next)
+    if (next) {
+      unlock()
+      rumble()
+    }
+  }
+
+  useMotionValueEvent(p, 'change', (v) => {
+    if (!sound.current) return
+    if (v > 0.2 && v < 0.5 && !lit.current) {
+      lit.current = true
+      rumble(true)
+    }
+    if (v < 0.15) lit.current = false
+    const n = Math.max(0, Math.min(15, Math.floor((v - 0.938) / 0.0023) + 1))
+    if (n > typed.current) tick()
+    typed.current = n
+  })
 
   const scale = useTransform(p, (v) => cam(v).s)
   const x = useTransform(p, (v) => `${cam(v).x}%`)
@@ -259,7 +312,7 @@ export default function Scene() {
           </motion.span>
         </motion.h1>
 
-        <div className="cards">
+        <div className="cards" role="region" aria-label="Facts about the 1970 Challenger">
           <DesignCard p={p} c={design} />
           <EngineCard p={p} c={engine} />
           <SizeCard p={p} c={size} />
@@ -269,16 +322,21 @@ export default function Scene() {
         <motion.div className="veil" aria-hidden="true" style={{ opacity: veilO }} />
         <Finale p={p} on={finaleOn} onBack={() => go(0)} />
 
-        {introDone ? (
-          <button
-            className="tour"
-            type="button"
-            onPointerDown={(e) => e.stopPropagation()}
-            onClick={() => (touring ? stopTour() : startTour())}
-          >
-            {touring ? 'Pause tour' : 'Play tour'}
+        <div className="controls" onPointerDown={(e) => e.stopPropagation()}>
+          {introDone ? (
+            <button className="tour" type="button" onClick={() => (touring ? stopTour() : startTour())}>
+              {touring ? 'Pause tour' : 'Play tour'}
+            </button>
+          ) : null}
+          <button className="tour" type="button" aria-pressed={soundOn} onClick={toggleSound}>
+            Sound {soundOn ? 'on' : 'off'}
           </button>
-        ) : null}
+        </div>
+
+        <div className={ready ? 'loader done' : 'loader'} aria-hidden={ready} role="status">
+          <span className="loader-mark">Challenger ’70</span>
+          <span className="loader-line" />
+        </div>
 
         <motion.div className="hint" style={{ opacity: hintO }}>
           <span className="mouse" aria-hidden="true" />

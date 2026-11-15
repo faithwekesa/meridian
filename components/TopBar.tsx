@@ -28,7 +28,7 @@ export default function TopBar({ onGo }: { onGo: (at: number) => void }) {
   return (
     <>
       <header className="bar">
-        <button className="mark" type="button" onClick={() => go(0)} aria-label="Challenger 1970, back to the start">
+        <button className="mark" type="button" onClick={() => go(0)} aria-label="Challenger ’70, back to the start">
           Challenger ’70
         </button>
         <span className="tag">An unofficial tribute.</span>

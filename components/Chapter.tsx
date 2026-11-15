@@ -4,12 +4,13 @@ import type { ReactNode } from 'react'
 import { motion, useTransform, type MotionValue } from 'motion/react'
 import { ENGINES, SIZES, type Chapter } from './data'
 
-export function Card({ p, c, children }: { p: MotionValue<number>; c: Chapter; children: ReactNode }) {
+export function Card({ p, c, src, children }: { p: MotionValue<number>; c: Chapter; src: string; children: ReactNode }) {
   const opacity = useTransform(p, [c.from, c.from + 0.03, c.to - 0.03, c.to], [0, 1, 1, 0])
   const y = useTransform(p, [c.from, c.from + 0.04], [24, 0])
   return (
-    <motion.article className="card" style={{ opacity, y }}>
+    <motion.article className={c.side === 'left' ? 'card left' : 'card'} style={{ opacity, y }}>
       {children}
+      <p className="src">Source: {src}</p>
     </motion.article>
   )
 }
@@ -34,9 +35,9 @@ function Bar({ p, from, i, name, hp }: { p: MotionValue<number>; from: number; i
 
 export function DesignCard({ p, c }: { p: MotionValue<number>; c: Chapter }) {
   return (
-    <Card p={p} c={c}>
+    <Card p={p} c={c} src="Dodge press release">
       <span className="tag-s">Design</span>
-      <h3>Four headlights, one wide grille</h3>
+      <h2>Four headlights, one wide grille</h2>
       <p>
         The Challenger carried four headlights where its sibling the Plymouth Barracuda had two. Carl Cameron designed
         the exterior.
@@ -47,24 +48,24 @@ export function DesignCard({ p, c }: { p: MotionValue<number>; c: Chapter }) {
 
 export function EngineCard({ p, c }: { p: MotionValue<number>; c: Chapter }) {
   return (
-    <Card p={p} c={c}>
+    <Card p={p} c={c} src="1970 sales brochure">
       <span className="tag-s">Under the hood</span>
-      <h3>From 145 hp to 425 hp</h3>
+      <h2>From 145 hp to 425 hp</h2>
       <ul className="bars">
         {ENGINES.map((e, i) => (
           <Bar key={e.name} p={p} from={c.from} i={i} name={e.name} hp={e.hp} />
         ))}
       </ul>
-      <p className="fine">Horsepower as listed in the 1970 sales brochure. The 426 Hemi made 490 lb·ft of torque at 4,000 rpm.</p>
+      <p className="fine">The 426 Hemi made 490 lb·ft of torque at 4,000 rpm.</p>
     </Card>
   )
 }
 
 export function SizeCard({ p, c }: { p: MotionValue<number>; c: Chapter }) {
   return (
-    <Card p={p} c={c}>
+    <Card p={p} c={c} src="Over-Drive fact sheet">
       <span className="tag-s">Dimensions</span>
-      <h3>Built on Chrysler&apos;s E-body</h3>
+      <h2>Built on Chrysler&apos;s E-body</h2>
       <dl className="sizes">
         {SIZES.map((s) => (
           <div key={s.label}>
@@ -83,9 +84,9 @@ export function SizeCard({ p, c }: { p: MotionValue<number>; c: Chapter }) {
 
 export function FirstCard({ p, c }: { p: MotionValue<number>; c: Chapter }) {
   return (
-    <Card p={p} c={c}>
+    <Card p={p} c={c} src="Dodge press release">
       <span className="tag-s">The first year</span>
-      <h3>Over 83,000 sold in 1970</h3>
+      <h2>Over 83,000 sold in 1970</h2>
       <p>
         The Challenger made its debut in the fall of 1969 as a 1970 model. Nine engines were offered. R/T cars came with a
         Rallye cluster that had a 150 mph speedometer and a tachometer.

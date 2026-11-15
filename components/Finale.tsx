@@ -1,12 +1,12 @@
 'use client'
 
-import { motion, useTransform, type MotionValue } from 'motion/react'
+import { easeInOut, motion, useTransform, type MotionValue } from 'motion/react'
 import { SOURCE } from './data'
 
 const FIRST = 'DODGE'
 const SECOND = 'CHALLENGER'
-const START = 0.962
-const STEP = 0.002
+const START = 0.938
+const STEP = 0.0023
 
 function Letter({ p, ch, i }: { p: MotionValue<number>; ch: string; i: number }) {
   const a = START + i * STEP
@@ -16,27 +16,30 @@ function Letter({ p, ch, i }: { p: MotionValue<number>; ch: string; i: number })
 }
 
 export default function Finale({ p, on, onBack }: { p: MotionValue<number>; on: boolean; onBack: () => void }) {
-  const subO = useTransform(p, [0.995, 1], [0, 1])
-  const subY = useTransform(p, [0.995, 1], [14, 0])
-  const curO = useTransform(p, [0.994, 0.996], [0, 1])
+  const subO = useTransform(p, [0.988, 1], [0, 1])
+  const subY = useTransform(p, [0.988, 1], [14, 0])
+  const curO = useTransform(p, [0.975, 0.977], [0, 1])
+  const lift = useTransform(p, [0.972, 0.99], ['0vh', '-29vh'], { ease: easeInOut })
   return (
-    <div className={on ? 'print on' : 'print'}>
-      <h2 aria-label="Dodge Challenger">
-        <span className="p1" aria-hidden="true">
-          {[...FIRST].map((c, i) => (
-            <Letter key={i} p={p} ch={c} i={i} />
-          ))}
-        </span>
-        <span className="p2" aria-hidden="true">
-          {[...SECOND].map((c, i) => (
-            <Letter key={i} p={p} ch={c} i={i + FIRST.length} />
-          ))}
-          <motion.i className="cursor" style={{ opacity: curO }}>
-            <b />
-          </motion.i>
-        </span>
-      </h2>
-      <motion.div className="print-sub" style={{ opacity: subO, y: subY }}>
+    <>
+      <motion.div className="print" style={{ y: lift }}>
+        <h2 aria-label="Dodge Challenger">
+          <span className="p1" aria-hidden="true">
+            {[...FIRST].map((c, i) => (
+              <Letter key={i} p={p} ch={c} i={i} />
+            ))}
+          </span>
+          <span className="p2" aria-hidden="true">
+            {[...SECOND].map((c, i) => (
+              <Letter key={i} p={p} ch={c} i={i + FIRST.length} />
+            ))}
+            <motion.i className="cursor" style={{ opacity: curO }}>
+              <b />
+            </motion.i>
+          </span>
+        </h2>
+      </motion.div>
+      <motion.div className={on ? 'print-sub on' : 'print-sub'} style={{ opacity: subO, y: subY }}>
         <p>Launched autumn 1969. Built until 1974.</p>
         <div className="actions">
           <button type="button" onClick={onBack}>
@@ -47,6 +50,6 @@ export default function Finale({ p, on, onBack }: { p: MotionValue<number>; on: 
           </a>
         </div>
       </motion.div>
-    </div>
+    </>
   )
 }

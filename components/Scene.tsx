@@ -38,7 +38,7 @@ const KEYS = [
     { p: c.from + 0.02, ...c.focus },
     { p: c.to - 0.01, x: c.focus.x, y: c.focus.y, s: c.focus.s * 1.07 },
   ]),
-  { p: 0.925, ...OVERVIEW },
+  { p: 0.915, ...OVERVIEW },
   { p: 1, ...OVERVIEW },
 ]
 
@@ -70,7 +70,10 @@ const cam = (v: number) => {
     const s = smooth(v, (k) => k.s)
     const fx = smooth(v, (k) => k.x)
     const fy = smooth(v, (k) => k.y)
-    lastCam = { s, x: -s * (fx - 50), y: -s * (fy - 50) }
+    const wide = typeof window !== 'undefined' && window.innerWidth > 700
+    const k = Math.min(1, Math.max(0, (v - 0.925) / 0.04))
+    const shift = wide ? 23 * k * k * (3 - 2 * k) : 0
+    lastCam = { s, x: -s * (fx - 50) + shift, y: -s * (fy - 50) }
     lastV = v
   }
   return lastCam
@@ -129,7 +132,7 @@ export default function Scene() {
     tourOn.set(1)
     setTouring(true)
     tour.current = animate(driver, 1, {
-      duration: (1 - now) * 36,
+      duration: (1 - now) * 40,
       ease: 'linear',
       onUpdate: (v: number) => {
         const m = document.documentElement.scrollHeight - window.innerHeight
@@ -169,7 +172,7 @@ export default function Scene() {
 
   const photoMask = 'radial-gradient(ellipse 60% 62% at 50% 56%, #000 55%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 22%, #000 82%, transparent 99%), linear-gradient(to right, transparent 0, #000 12%, #000 88%, transparent 100%)'
   const baseO = useTransform(p, [0.2, 0.3], [0, 1])
-  const lamp = useTransform(p, [0.2, 0.21, 0.22, 0.24, 0.255, 0.28, 0.92, 0.95], [0, 1, 0.3, 1, 0.65, 1, 1, 0])
+  const lamp = useTransform(p, [0.2, 0.21, 0.22, 0.24, 0.255, 0.28, 0.9, 0.93, 0.985, 0.998], [0, 1, 0.3, 1, 0.65, 1, 1, 0, 0, 1])
 
   const fogO = useTransform(p, [0, 0.3, 0.4], [0.2, 0.7, 0.4])
   const wedgeO = useTransform(p, [0.08, 0.3, 0.4], [0, 0.95, 0.45])
@@ -189,14 +192,14 @@ export default function Scene() {
   const t2Spacing = useMotionTemplate`${t2Space}em`
   const t2Y = useTransform(tin, [0, 1], [26, 0])
 
-  const ghostO = useTransform(p, [0.2, 0.3, 0.4, 0.9, 0.93], [0, 1, 0.3, 0.3, 0])
+  const ghostO = useTransform(p, [0.2, 0.3, 0.4, 0.88, 0.91], [0, 1, 0.3, 0.3, 0])
   const ghostX = useTransform(p, [0.2, 0.3], [60, 0])
-  const veilO = useTransform(p, [0.92, 0.955], [0, 1])
+  const veilO = useTransform(p, [0.91, 0.935, 0.975, 0.99], [0, 1, 1, 0])
   const hintO = useTransform(p, [0.28, 0.3, 0.33, 0.4], [0, 1, 1, 0])
-  const noteO = useTransform(p, [0.97, 1], [0, 1])
+  const noteO = useTransform(p, [0.985, 1], [0, 1])
 
   const [finaleOn, setFinaleOn] = useState(false)
-  useMotionValueEvent(p, 'change', (v) => setFinaleOn(v > 0.995))
+  useMotionValueEvent(p, 'change', (v) => setFinaleOn(v > 0.99))
 
   const go = (at: number) => {
     stopTour()

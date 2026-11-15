@@ -65,14 +65,16 @@ const smooth = (v: number, f: (k: (typeof KEYS)[number]) => number) => {
 }
 
 let lastV = -1
+let lastWide = true
 let lastCam = { s: 1, x: 0, y: 0 }
 const cam = (v: number) => {
-  if (v !== lastV) {
+  const wide = typeof window !== 'undefined' && window.innerWidth > 700
+  if (v !== lastV || wide !== lastWide) {
+    lastWide = wide
     const s = smooth(v, (k) => k.s)
     const fx = smooth(v, (k) => k.x)
     const fy = smooth(v, (k) => k.y)
     const ax = smooth(v, (k) => k.ax)
-    const wide = typeof window !== 'undefined' && window.innerWidth > 700
     const k = Math.min(1, Math.max(0, (v - 0.925) / 0.04))
     const shift = wide ? 23 * k * k * (3 - 2 * k) : 0
     lastCam = { s, x: (wide ? ax - 50 : 0) - s * (fx - 50) + shift, y: -s * (fy - 50) }

@@ -836,3 +836,11 @@ button {
     visibility: hidden;
   }
 }
+
+html {
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
+}

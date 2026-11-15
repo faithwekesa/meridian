@@ -38,8 +38,8 @@ export function DesignCard({ p, c }: { p: MotionValue<number>; c: Chapter }) {
       <span className="tag-s">Design</span>
       <h3>Four headlights, one wide grille</h3>
       <p>
-        The Challenger carried four headlights where its sibling the Plymouth Barracuda had two. Carl Cameron, who also
-        drew the exterior of the 1966 Dodge Charger, designed the car.
+        The Challenger carried four headlights where its sibling the Plymouth Barracuda had two. Carl Cameron designed
+        the exterior.
       </p>
     </Card>
   )
@@ -55,7 +55,7 @@ export function EngineCard({ p, c }: { p: MotionValue<number>; c: Chapter }) {
           <Bar key={e.name} p={p} from={c.from} i={i} name={e.name} hp={e.hp} />
         ))}
       </ul>
-      <p className="fine">Horsepower as rated in 1970 (SAE gross). The 426 Hemi made 490 lb·ft of torque and was sold on R/T cars only.</p>
+      <p className="fine">Horsepower as listed in the 1970 sales brochure. The 426 Hemi made 490 lb·ft of torque at 4,000 rpm.</p>
     </Card>
   )
 }
@@ -64,7 +64,7 @@ export function SizeCard({ p, c }: { p: MotionValue<number>; c: Chapter }) {
   return (
     <Card p={p} c={c}>
       <span className="tag-s">Dimensions</span>
-      <h3>Built on Chrysler&apos;s E platform</h3>
+      <h3>Built on Chrysler&apos;s E-body</h3>
       <dl className="sizes">
         {SIZES.map((s) => (
           <div key={s.label}>
@@ -76,7 +76,7 @@ export function SizeCard({ p, c }: { p: MotionValue<number>; c: Chapter }) {
           </div>
         ))}
       </dl>
-      <p>It shared major parts with the Plymouth Barracuda. The Challenger&apos;s wheelbase was two inches longer.</p>
+      <p>It shared Chrysler&apos;s E-body platform with the Plymouth Barracuda. The Challenger&apos;s wheelbase was two inches longer.</p>
     </Card>
   )
 }
@@ -85,10 +85,10 @@ export function FirstCard({ p, c }: { p: MotionValue<number>; c: Chapter }) {
   return (
     <Card p={p} c={c}>
       <span className="tag-s">The first year</span>
-      <h3>About 77,000 built in 1970</h3>
+      <h3>Over 83,000 sold in 1970</h3>
       <p>
-        Assembled in Hamtramck, Michigan and Maywood, California. The taillights ran the full width of the rear with the
-        backup light in the middle. R/T cars got a Rallye cluster with a 150 mph speedometer and an 8,000 rpm tachometer.
+        The Challenger made its debut in the fall of 1969 as a 1970 model. Nine engines were offered. R/T cars came with a
+        Rallye cluster that had a 150 mph speedometer and a tachometer.
       </p>
     </Card>
   )

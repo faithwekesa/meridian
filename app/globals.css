@@ -871,3 +871,16 @@ html {
 html::-webkit-scrollbar {
   display: none;
 }
+
+.print-sub .sources {
+  margin: 16px 0 0;
+  font-size: 11.5px;
+  color: var(--smoke);
+}
+
+.print-sub .sources a {
+  color: #b9b5ad;
+  text-decoration: underline;
+  text-decoration-color: rgba(207, 167, 96, 0.5);
+  text-underline-offset: 3px;
+}

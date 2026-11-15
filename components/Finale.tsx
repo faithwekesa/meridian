@@ -1,7 +1,7 @@
 'use client'
 
 import { easeInOut, motion, useTransform, type MotionValue } from 'motion/react'
-import { SOURCE } from './data'
+import { SOURCES } from './data'
 
 const FIRST = 'DODGE'
 const SECOND = 'CHALLENGER'
@@ -40,15 +40,24 @@ export default function Finale({ p, on, onBack }: { p: MotionValue<number>; on: 
         </h2>
       </motion.div>
       <motion.div className={on ? 'print-sub on' : 'print-sub'} style={{ opacity: subO, y: subY }}>
-        <p>Launched autumn 1969. Built until 1974.</p>
+        <p>Debuted in the fall of 1969 as a 1970 model.</p>
         <div className="actions">
           <button type="button" onClick={onBack}>
             Back to the start
           </button>
-          <a href={SOURCE.href} target="_blank" rel="noopener noreferrer">
-            Source: Wikipedia
-          </a>
+
         </div>
+        <p className="sources">
+          Sources:{' '}
+          {SOURCES.map((s, i) => (
+            <span key={s.href}>
+              {i > 0 ? ' · ' : ''}
+              <a href={s.href} target="_blank" rel="noopener noreferrer">
+                {s.label}
+              </a>
+            </span>
+          ))}
+        </p>
       </motion.div>
     </>
   )

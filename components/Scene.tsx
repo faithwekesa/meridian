@@ -21,7 +21,6 @@ import Parts from './Parts'
 import TopBar from './TopBar'
 import { DesignCard, EngineCard, FirstCard, SizeCard } from './Chapter'
 import { CHAPTERS } from './data'
-import { rumble, tick, unlock } from './sound'
 
 const LAMPS = [
   { left: '14.4%', top: '62%' },
@@ -98,10 +97,6 @@ export default function Scene() {
   const [touring, setTouring] = useState(false)
   const [introDone, setIntroDone] = useState(false)
   const [ready, setReady] = useState(false)
-  const [soundOn, setSoundOn] = useState(false)
-  const sound = useRef(false)
-  const lit = useRef(false)
-  const typed = useRef(0)
 
   const play = () => {
     playing.current?.stop()
@@ -198,28 +193,6 @@ export default function Scene() {
     return () => window.clearTimeout(t)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready])
-
-  const toggleSound = () => {
-    const next = !sound.current
-    sound.current = next
-    setSoundOn(next)
-    if (next) {
-      unlock()
-      rumble()
-    }
-  }
-
-  useMotionValueEvent(p, 'change', (v) => {
-    if (!sound.current) return
-    if (v > 0.2 && v < 0.5 && !lit.current) {
-      lit.current = true
-      rumble(true)
-    }
-    if (v < 0.15) lit.current = false
-    const n = Math.max(0, Math.min(15, Math.floor((v - 0.938) / 0.0023) + 1))
-    if (n > typed.current) tick()
-    typed.current = n
-  })
 
   const scale = useTransform(p, (v) => cam(v).s)
   const x = useTransform(p, (v) => `${cam(v).x}%`)
@@ -330,9 +303,6 @@ export default function Scene() {
               {touring ? 'Pause tour' : 'Play tour'}
             </button>
           ) : null}
-          <button className="tour" type="button" aria-pressed={soundOn} onClick={toggleSound}>
-            Sound {soundOn ? 'on' : 'off'}
-          </button>
         </div>
 
         <div className={ready ? 'loader done' : 'loader'} aria-hidden={ready} role="status">
